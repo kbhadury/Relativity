@@ -4,7 +4,7 @@
 	<head>
 		<title>Relativity</title>
 	</head>
-	<body onload="draw()">
+	<body onload="init()">
 		<h2>Relativity!</h2>
 		<canvas id="shipcanvas" width="1000" height="250">
 			If you're seeing this, your browser does not support the canvas element
@@ -32,6 +32,12 @@
 			<span style="color:blue">Bob</span>: <input type="number" id="bob_len" min="1" max="1000" step="1" value="100">
 			
 			<br>
+		</form>
+		
+		<h3>Choose your style of clocks</h3>
+		<form>
+			<input type="radio" name="clkstyle" id="digital" onchange="changeClkStyle(this)" checked="checked">Digital
+			<input type="radio" name="clkstyle" id="analog" onchange="changeClkStyle(this)">Analog
 		</form>
 		
 		<div style="margin-top: 20px;">
