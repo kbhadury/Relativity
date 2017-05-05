@@ -1,68 +1,56 @@
+//Control drawing
+var shipcanvas, clkcanvas;
+var shipctx, clkctx;
+var digitalClk = true;
+
 //Control animation
 var play = false;
 var animateID;
 
-//Data for Anna and Bob
-anna_x = 500; //Default start pos
-bob_x = 500;
+//Data for Anna and Bob, set to defaults
+var anna_x = 500;
+var bob_x = 500;
 var anna_len = 100;
 var bob_len = 100;
 var anna_speed = 0
 var bob_speed = 0;
+var lorentz = 0;
 
-//Time in nanoseconds
+//Times in nanoseconds
 var anna_times = [0, 0, 0];
 var bob_times = [0, 0, 0];
 
+//Current time in rest frame
 var rest_time = 0;
+
+//Set up canvas and context variables
+function init(){
+	//Set up canvases and contexts
+	shipcanvas = document.getElementById("shipcanvas");
+	shipctx = shipcanvas.getContext('2d');
+	
+	clkcanvas = document.getElementById("clkcanvas");
+	clkctx = clkcanvas.getContext('2d');
+	
+	draw();
+}
 
 //Fired when play/pause button is pressed
 function togglePlay(button){
 	if(play){ //If currently playing
 		button.innerHTML = "Play";
 		window.clearInterval(animateID);
-	}else{
+	} else {
 		button.innerHTML = "Pause";
-		calculate();
-		animateID = window.setInterval(draw, 50);
+		calculateLengths();
+		calculateTimes();
+		animateID = window.setInterval(animate, 50);
 	}
 	
 	play = !play;
 }
 
-//Calculate the apparent lengths of Anna's and Bob's ships
-function calculate(){
-	var lorentz;
-	
-	//Anna's frame
-	if(document.getElementById("annaRB").checked){
-		anna_speed = 0;
-		bob_speed = parseFloat(document.getElementById("bob_speed").value);
-		
-		lorentz = 1/Math.sqrt(1-(bob_speed*bob_speed));
-		
-		anna_len = parseFloat(document.getElementById("anna_len").value);
-		bob_len = parseFloat(document.getElementById("bob_len").value) / lorentz;
-		
-		anna_times[0] = anna_times[1] = anna_times[2] = rest_time;
-		
-		bob_times[0] = lorentz*(rest_time - (bob_speed*10/3) * (bob_x - 500 - bob_len*0.5));
-		bob_times[1] = lorentz*(rest_time - (bob_speed*10/3) * (bob_x - 500));
-		bob_times[2] = lorentz*(rest_time - (bob_speed*10/3) * (bob_x - 500 + bob_len*0.5));
-	
-	//Bob's frame
-	}else{
-		anna_speed = parseFloat(document.getElementById("anna_speed").value);
-		bob_speed = 0;
-		
-		lorentz = 1/Math.sqrt(1-(anna_speed*anna_speed));
-		
-		anna_len = parseFloat(document.getElementById("anna_len").value) / lorentz;
-		bob_len = parseFloat(document.getElementById("bob_len").value);
-	}
-}
-
-//Fired when radio buttons are updated
+//Fired when frame radio buttons are updated
 function changeFrame(radio){
 	//Get corresponding IDs and names
 	var selected_id = radio.id.slice(0, -2); //either "anna" or "bob"
@@ -87,9 +75,63 @@ function changeFrame(radio){
 	reset();
 }
 
+//Fired when clock style radio buttons are updated
+function changeClkStyle(radio){
+	if(radio.id == "analog") digitalClk = false;
+	else digitalClk = true;
+	
+	//Redraw
+	draw();
+}
+
+//Calculate the apparent lengths of Anna's and Bob's ships
+function calculateLengths(){	
+	//Anna's frame
+	if(document.getElementById("annaRB").checked){
+		anna_speed = 0;
+		bob_speed = parseFloat(document.getElementById("bob_speed").value);
+		
+		lorentz = 1/Math.sqrt(1-(bob_speed*bob_speed));
+		
+		anna_len = parseFloat(document.getElementById("anna_len").value);
+		bob_len = parseFloat(document.getElementById("bob_len").value) / lorentz;
+		
+	//Bob's frame
+	} else {
+		anna_speed = parseFloat(document.getElementById("anna_speed").value);
+		bob_speed = 0;
+		
+		lorentz = 1/Math.sqrt(1-(anna_speed*anna_speed));
+		
+		anna_len = parseFloat(document.getElementById("anna_len").value) / lorentz;
+		bob_len = parseFloat(document.getElementById("bob_len").value);
+	}
+}
+
+//Calculate everyone's clocks.  Assumes lorentz has already been calculated
+function calculateTimes(){
+	//Anna's frame
+	if(document.getElementById("annaRB").checked){
+		anna_times[0] = anna_times[1] = anna_times[2] = rest_time;
+		
+		bob_times[0] = lorentz*(rest_time - (bob_speed*10/3) * (bob_x - 500 - bob_len*0.5));
+		bob_times[1] = lorentz*(rest_time - (bob_speed*10/3) * (bob_x - 500));
+		bob_times[2] = lorentz*(rest_time - (bob_speed*10/3) * (bob_x - 500 + bob_len*0.5));
+		
+	//Bob's frame
+	} else {
+		bob_times[0] = bob_times[1] = bob_times[2] = rest_time;
+		
+		anna_times[0] = lorentz*(rest_time - (anna_speed*10/3) * (anna_x - 500 - anna_len*0.5));
+		anna_times[1] = lorentz*(rest_time - (anna_speed*10/3) * (anna_x - 500));
+		anna_times[2] = lorentz*(rest_time - (anna_speed*10/3) * (anna_x - 500 + anna_len*0.5));
+	}
+}
+
 //Force values to be recalculated and displayed
 function update(){
-	calculate();
+	calculateLengths();
+	calculateTimes();
 	draw();
 }
 
@@ -104,14 +146,17 @@ function reset(){
 	update();
 }
 
-function draw(){
-	//Set up canvases and contexts
-	var shipcanvas = document.getElementById("shipcanvas");
-	var shipctx = shipcanvas.getContext('2d');
-	
-	var clkcanvas = document.getElementById("clkcanvas");
-	var clkctx = clkcanvas.getContext('2d');
-	
+//Draw, update values, and recalculate for next iteration
+function animate(){
+	draw();
+	rest_time += 50; //1 ms in sim = 1 ns in real world
+	calculateTimes();
+	anna_x += 15*anna_speed;
+	bob_x += 15*bob_speed;
+}
+
+//Draw grid, ships, clocks
+function draw(){	
 	//Reset canvases
 	shipctx.clearRect(0, 0, 1000, 250);
 	clkctx.clearRect(0, 0, 500, 250);
@@ -158,11 +203,6 @@ function draw(){
 	clock(clkctx, 125, 150, parseInt(bob_times[0]));
 	clock(clkctx, 250, 150, parseInt(bob_times[1]));
 	clock(clkctx, 375, 150, parseInt(bob_times[2]));
-	
-	rest_time += 50; //1ms in sim = 1ns in real world
-	
-	anna_x += 15*anna_speed;
-	bob_x += 15*bob_speed;
 }
 
 function background(ctx){
@@ -199,17 +239,40 @@ function spaceship(ctx, x, y, height, length){
 }
 
 //Draw a clock centered at x,y that reads display param
-//Default dimensions are 100x50
+//Default dimensions are 100x50 for digital and radius 40 for analog
 function clock(ctx, x, y, display){
-	ctx.fillRect(x-50, y-25, 100, 50);
-	ctx.lineWidth = 4;
-	ctx.strokeRect(x-50, y-25, 100, 50);
-	ctx.lineWidth = 1;
-	
-	origfill = ctx.fillStyle;
-	ctx.fillStyle = 'rgb(0, 0, 0)';
-	ctx.fillText(display, x, y)
-	ctx.fillStyle = origfill;
+	if(digitalClk){
+		//Draw boxes
+		ctx.fillRect(x-50, y-25, 100, 50);
+		ctx.lineWidth = 4;
+		ctx.strokeRect(x-50, y-25, 100, 50);
+		ctx.lineWidth = 1;
+		
+		//Draw text
+		origfill = ctx.fillStyle;
+		ctx.fillStyle = 'rgb(0, 0, 0)';
+		ctx.fillText(display, x, y)
+		ctx.fillStyle = origfill;
+	} else {
+		//Draw circles
+		ctx.beginPath();
+		ctx.arc(x, y, 40, 0, 2*Math.PI, false);
+		ctx.fill();
+		ctx.lineWidth = 4;
+		ctx.stroke();
+		ctx.lineWidth = 1;
+		
+		//Draw hand
+		display = display % 1000; //One rev around clock = 1000 time units
+		ctx.save();
+		ctx.translate(x, y);
+		ctx.rotate(2 * Math.PI * display / 1000);
+		ctx.beginPath();
+		ctx.moveTo(0, 0);
+		ctx.lineTo(0, -30);
+		ctx.stroke();
+		ctx.restore();
+	}
 }
 
 //Draw bg grid with labels
