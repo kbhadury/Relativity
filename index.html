@@ -6,22 +6,30 @@
 	</head>
 	<body onload="init()">
 		<h2>Relativity!</h2>
-		<canvas id="shipcanvas" width="1000" height="250">
-			If you're seeing this, your browser does not support the canvas element
-		</canvas>
+		<div>
+			<canvas id="shipcanvas" width="1000" height="200">
+				If you're seeing this, your browser does not support the canvas element
+			</canvas>
+		</div>
 		
-		<canvas id="clkcanvas" width="500" height="250">
-			If you're seeing this, your browser does not support the canvas element
-		</canvas>
+		<div>		
+			<canvas id="clkcanvas" width="400" height="200">
+				If you're seeing this, your browser does not support the canvas element
+			</canvas>
+		</div>
 		
-		<h3>Choose a frame</h3>
-		<form>
+		<div>
+			<h3>Controls (enter input below)</h3>
+			<button id="update" onclick="update()">Update</button>
+			<button id="playpause" onclick="togglePlay(this)">Play</button>
+			<button id="step" onclick="step()">Step</button>
+			<button id="reset" onclick="reset()">Reset animation</button>
+			
+			<h3>Choose a frame</h3>
 			<input type="radio" name="frame" id="annaRB" onchange="changeFrame(this)" checked="checked"><span style="color:red">Anna</span>
 			<input type="radio" name="frame" id="bobRB" onchange="changeFrame(this)"><span style="color:blue">Bob</span>
-		</form>
-		
-		<h3 id="speed_text">Set velocities relative to Anna (in terms of c, can be +/-)</h3>
-		<form method="calculate()">
+			
+			<h3 id="speed_text">Set velocities relative to Anna (in terms of c, can be +/-)</h3>
 			<span style="color:red">Anna</span>: <input type="number" id="anna_speed" min="-0.99" max="0.99" step="0.01" value="0" disabled="disabled">
 			<span style="color:blue">Bob</span>: <input type="number" id="bob_speed" min="-0.99" max="0.99" step="0.01" value="0">
 		
@@ -31,19 +39,9 @@
 			<span style="color:red">Anna</span>: <input type="number" id="anna_len" min="1" max="1000" step="1" value="100">
 			<span style="color:blue">Bob</span>: <input type="number" id="bob_len" min="1" max="1000" step="1" value="100">
 			
-			<br>
-		</form>
-		
-		<h3>Choose your style of clocks</h3>
-		<form>
+			<h3>Choose your style of clocks</h3>
 			<input type="radio" name="clkstyle" id="digital" onchange="changeClkStyle(this)" checked="checked">Digital
 			<input type="radio" name="clkstyle" id="analog" onchange="changeClkStyle(this)">Analog
-		</form>
-		
-		<div style="margin-top: 20px;">
-			<button id="update" onclick="update()">Update</button>
-			<button id="playpause" onclick="togglePlay(this)">Play</button>
-			<button id="reset" onclick="reset()">Reset animation</button>
 		</div>
 		
 		<h3>
