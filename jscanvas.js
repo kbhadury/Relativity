@@ -2,6 +2,10 @@
 var shipcanvas, clkcanvas;
 var shipctx, clkctx;
 var digitalClk = true;
+var SHIP_CANVAS_WIDTH = 1000;
+var SHIP_CANVAS_HEIGHT = 200;
+var CLK_CANVAS_WIDTH = 400;
+var CLK_CANVAS_HEIGHT = 200;
 
 //Control animation
 var play = false;
@@ -44,7 +48,7 @@ function togglePlay(button){
 		button.innerHTML = "Pause";
 		calculateLengths();
 		calculateTimes();
-		animateID = window.setInterval(animate, 50);
+		animateID = window.setInterval(step, 50);
 	}
 	
 	play = !play;
@@ -110,21 +114,22 @@ function calculateLengths(){
 
 //Calculate everyone's clocks.  Assumes lorentz has already been calculated
 function calculateTimes(){
+	scale_factor = 10/3;  //Speed already in terms of c, so we divide by 3e8 and multiply by 1e9 for nanoseconds
 	//Anna's frame
 	if(document.getElementById("annaRB").checked){
 		anna_times[0] = anna_times[1] = anna_times[2] = rest_time;
 		
-		bob_times[0] = lorentz*(rest_time - (bob_speed*10/3) * (bob_x - 500 - bob_len*0.5));
-		bob_times[1] = lorentz*(rest_time - (bob_speed*10/3) * (bob_x - 500));
-		bob_times[2] = lorentz*(rest_time - (bob_speed*10/3) * (bob_x - 500 + bob_len*0.5));
+		bob_times[0] = lorentz*(rest_time - (bob_speed*scale_factor) * (bob_x - 500 - bob_len*0.5));
+		bob_times[1] = lorentz*(rest_time - (bob_speed*scale_factor) * (bob_x - 500));
+		bob_times[2] = lorentz*(rest_time - (bob_speed*scale_factor) * (bob_x - 500 + bob_len*0.5));
 		
 	//Bob's frame
 	} else {
 		bob_times[0] = bob_times[1] = bob_times[2] = rest_time;
 		
-		anna_times[0] = lorentz*(rest_time - (anna_speed*10/3) * (anna_x - 500 - anna_len*0.5));
-		anna_times[1] = lorentz*(rest_time - (anna_speed*10/3) * (anna_x - 500));
-		anna_times[2] = lorentz*(rest_time - (anna_speed*10/3) * (anna_x - 500 + anna_len*0.5));
+		anna_times[0] = lorentz*(rest_time - (anna_speed*scale_factor) * (anna_x - 500 - anna_len*0.5));
+		anna_times[1] = lorentz*(rest_time - (anna_speed*scale_factor) * (anna_x - 500));
+		anna_times[2] = lorentz*(rest_time - (anna_speed*scale_factor) * (anna_x - 500 + anna_len*0.5));
 	}
 }
 
@@ -147,32 +152,33 @@ function reset(){
 }
 
 //Draw, update values, and recalculate for next iteration
-function animate(){
-	draw();
+//Note that this lags for one step when activated manually
+function step(){
 	rest_time += 50; //1 ms in sim = 1 ns in real world
-	calculateTimes();
 	anna_x += 15*anna_speed;
 	bob_x += 15*bob_speed;
+	calculateTimes();
+	draw();
 }
 
 //Draw grid, ships, clocks
 function draw(){	
 	//Reset canvases
-	shipctx.clearRect(0, 0, 1000, 250);
-	clkctx.clearRect(0, 0, 500, 250);
+	shipctx.clearRect(0, 0, SHIP_CANVAS_WIDTH, SHIP_CANVAS_HEIGHT);
+	clkctx.clearRect(0, 0, CLK_CANVAS_WIDTH, CLK_CANVAS_WIDTH);
 	
 	shipctx.fillStyle = 'rgb(200, 200, 200)';
-	shipctx.fillRect(0, 0, 1000, 250);
+	shipctx.fillRect(0, 0, SHIP_CANVAS_WIDTH, SHIP_CANVAS_WIDTH);
 	
 	clkctx.fillStyle = 'rgb(51, 153, 102)';
-	clkctx.fillRect(0, 0, 500, 250);
+	clkctx.fillRect(0, 0, CLK_CANVAS_WIDTH, CLK_CANVAS_HEIGHT);
 	
 	//background(ctx);
 	
 	//Set up fonts
 	shipctx.font = '10px sans-serif';
 	shipctx.textBaseline = 'top';
-	grid(shipctx, 1000, 250, 50);
+	grid(shipctx, SHIP_CANVAS_WIDTH, SHIP_CANVAS_HEIGHT, 50);
 	
 	clkctx.font = "24px serif";
 	clkctx.textAlign = 'center';
@@ -193,16 +199,16 @@ function draw(){
 	//Anna
 	clkctx.fillStyle = 'rgb(240, 240, 240)';
 	clkctx.strokeStyle = 'rgb(200, 0, 0)';
-	clock(clkctx, 125, 50, parseInt(anna_times[0]));
-	clock(clkctx, 250, 50, parseInt(anna_times[1]));
-	clock(clkctx, 375, 50, parseInt(anna_times[2]));
+	clock(clkctx, 100, 50, parseInt(anna_times[0]));
+	clock(clkctx, 200, 50, parseInt(anna_times[1]));
+	clock(clkctx, 300, 50, parseInt(anna_times[2]));
 	
 	//Bob
 	clkctx.fillStyle = 'rgb(240, 240, 240)';
 	clkctx.strokeStyle = 'rgb(0, 0, 200)';
-	clock(clkctx, 125, 150, parseInt(bob_times[0]));
-	clock(clkctx, 250, 150, parseInt(bob_times[1]));
-	clock(clkctx, 375, 150, parseInt(bob_times[2]));
+	clock(clkctx, 100, 150, parseInt(bob_times[0]));
+	clock(clkctx, 200, 150, parseInt(bob_times[1]));
+	clock(clkctx, 300, 150, parseInt(bob_times[2]));
 }
 
 function background(ctx){
@@ -261,6 +267,12 @@ function clock(ctx, x, y, display){
 		ctx.lineWidth = 4;
 		ctx.stroke();
 		ctx.lineWidth = 1;
+		
+		//Draw 1000ns marker
+		origfill = ctx.fillStyle;
+		ctx.fillStyle = 'rgb(100, 100, 100)';
+		ctx.fillText("1000ns", x, y);
+		ctx.fillStyle = origfill;
 		
 		//Draw hand
 		display = display % 1000; //One rev around clock = 1000 time units
