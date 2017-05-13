@@ -73,7 +73,7 @@ function changeFrame(radio){
 	document.getElementById(selected_speed_id).value = "0";
 	document.getElementById(selected_speed_id).setAttribute("disabled", "disabled");
 	
-	document.getElementById("speed_text").innerHTML = "Set velocities relative to " + selected_name + " (in terms of c, can be +/-)";
+	document.getElementById("speed_text").innerHTML = "Set velocities relative to " + selected_name + " (in terms of c)";
 	
 	//Update values
 	reset();
@@ -170,19 +170,23 @@ function draw(){
 	shipctx.fillStyle = 'rgb(200, 200, 200)';
 	shipctx.fillRect(0, 0, SHIP_CANVAS_WIDTH, SHIP_CANVAS_WIDTH);
 	
-	clkctx.fillStyle = 'rgb(51, 153, 102)';
+	clkctx.fillStyle = 'rgb(200, 200, 200)';
 	clkctx.fillRect(0, 0, CLK_CANVAS_WIDTH, CLK_CANVAS_HEIGHT);
-	
-	//background(ctx);
 	
 	//Set up fonts
 	shipctx.font = '10px sans-serif';
 	shipctx.textBaseline = 'top';
-	grid(shipctx, SHIP_CANVAS_WIDTH, SHIP_CANVAS_HEIGHT, 50);
 	
-	clkctx.font = "24px serif";
+	clkctx.font = "20px sans-serif";
 	clkctx.textAlign = 'center';
 	clkctx.textBaseline = 'middle';
+	
+	//Draw ship grid and clock labels
+	grid(shipctx, SHIP_CANVAS_WIDTH, SHIP_CANVAS_HEIGHT, 50);
+	clkctx.fillStyle = 'rgb(0, 0, 0)';
+	clkctx.fillText("Rear", 100, 100);
+	clkctx.fillText("Middle", 200, 100);
+	clkctx.fillText("Front", 300, 100);
 	
 	//Draw ships
 	//Anna
@@ -209,23 +213,6 @@ function draw(){
 	clock(clkctx, 100, 150, parseInt(bob_times[0]));
 	clock(clkctx, 200, 150, parseInt(bob_times[1]));
 	clock(clkctx, 300, 150, parseInt(bob_times[2]));
-}
-
-function background(ctx){
-	var gradient1 = ctx.createRadialGradient(100, 75, 5, 95, 80, 20);
-	gradient1.addColorStop(0, '#FF9900');
-	gradient1.addColorStop(0.9, '#FFEBCC');
-	gradient1.addColorStop(1, 'rgba(255, 235, 204, 0)');
-	
-	var gradient2 = ctx.createRadialGradient(410, 210, 10, 415, 205, 30);
-	gradient2.addColorStop(0, '#0099CC');
-	gradient2.addColorStop(0.9, '#CCF2FF');
-	gradient2.addColorStop(1, 'rgba(204, 242, 255, 0)');
-	
-	ctx.fillStyle = gradient1;
-	ctx.fillRect(0, 0, 1000, 250);
-	ctx.fillStyle = gradient2;
-	ctx.fillRect(0, 0, 1000, 250);
 }
 
 //Draw a spaceship centered at x, y
