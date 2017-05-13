@@ -1,47 +1,66 @@
 <!DOCTYPE html>
 
 <html>
+
 	<head>
 		<title>Relativity</title>
+		<link href="https://fonts.googleapis.com/css?family=Aldrich" rel="stylesheet"> <!-- Google fonts -->
+		<link rel="stylesheet" href="canvas.css">
 	</head>
+	
 	<body onload="init()">
-		<h2>Relativity!</h2>
-		<div>
+	
+		<h2 class="title">Relativity!</h2>
+		
+		<div id="shipdiv">
 			<canvas id="shipcanvas" width="1000" height="200">
 				If you're seeing this, your browser does not support the canvas element
 			</canvas>
 		</div>
 		
-		<div>		
-			<canvas id="clkcanvas" width="400" height="200">
-				If you're seeing this, your browser does not support the canvas element
-			</canvas>
+		<!-- Clock panel -->
+		<div class="inlinebox">
+			<h3 class="title">Onboard clocks</h3>
+			
+			<div id="clkdiv">
+				<canvas id="clkcanvas" width="400" height="200">
+					If you're seeing this, your browser does not support the canvas element
+				</canvas>
+			</div>
+			
+			<br>
+			
+			<div style="text-align:center;">
+				<input type="radio" name="clkstyle" id="digital" onchange="changeClkStyle(this)" checked="checked">Digital
+				<span style="margin-left:40px; margin-right:10px;"></span>
+				<input type="radio" name="clkstyle" id="analog" onchange="changeClkStyle(this)">Analog	
+			</div>			
 		</div>
 		
-		<div>
-			<h3>Controls (enter input below)</h3>
+		<!-- Controls panel -->
+		<div class="inlinebox">
+			<h3 class="title">Control Deck</h3>
 			<button id="update" onclick="update()">Update</button>
 			<button id="playpause" onclick="togglePlay(this)">Play</button>
 			<button id="step" onclick="step()">Step</button>
 			<button id="reset" onclick="reset()">Reset animation</button>
-			
+		</div>
+		
+		<!-- Input panel -->
+		<div class="inlinebox">			
 			<h3>Choose a frame</h3>
 			<input type="radio" name="frame" id="annaRB" onchange="changeFrame(this)" checked="checked"><span style="color:red">Anna</span>
-			<input type="radio" name="frame" id="bobRB" onchange="changeFrame(this)"><span style="color:blue">Bob</span>
+			<input type="radio" name="frame" id="bobRB" onchange="changeFrame(this)"><span style="color:#4080bf">Bob</span>
 			
-			<h3 id="speed_text">Set velocities relative to Anna (in terms of c, can be +/-)</h3>
+			<h3 id="speed_text" style="font-size: 16px;">Set velocities relative to Anna (in terms of c)</h3>
 			<span style="color:red">Anna</span>: <input type="number" id="anna_speed" min="-0.99" max="0.99" step="0.01" value="0" disabled="disabled">
-			<span style="color:blue">Bob</span>: <input type="number" id="bob_speed" min="-0.99" max="0.99" step="0.01" value="0">
+			<span style="color:#4080bf">Bob</span>: <input type="number" id="bob_speed" min="-0.99" max="0.99" step="0.01" value="0">
 		
 			<h3>Set their spaceships' lengths (in meters)</h3>
 			<p>These are the ships' <i>proper</i> lengths</p>
 
 			<span style="color:red">Anna</span>: <input type="number" id="anna_len" min="1" max="1000" step="1" value="100">
-			<span style="color:blue">Bob</span>: <input type="number" id="bob_len" min="1" max="1000" step="1" value="100">
-			
-			<h3>Choose your style of clocks</h3>
-			<input type="radio" name="clkstyle" id="digital" onchange="changeClkStyle(this)" checked="checked">Digital
-			<input type="radio" name="clkstyle" id="analog" onchange="changeClkStyle(this)">Analog
+			<span style="color:#4080bf">Bob</span>: <input type="number" id="bob_len" min="1" max="1000" step="1" value="100">			
 		</div>
 		
 		<h3>
