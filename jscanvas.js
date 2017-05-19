@@ -19,6 +19,7 @@ var bob_len = 100;
 var anna_speed = 0
 var bob_speed = 0;
 var lorentz = 0;
+var cur_frame = "anna";
 
 //Times in nanoseconds
 var anna_times = [0, 0, 0];
@@ -29,7 +30,6 @@ var rest_time = 0;
 
 //Set up canvas and context variables
 function init(){
-	//Set up canvases and contexts
 	shipcanvas = document.getElementById("shipcanvas");
 	shipctx = shipcanvas.getContext('2d');
 	
@@ -39,19 +39,61 @@ function init(){
 	draw();
 }
 
+//Check if data entered is within the appropriate bounds
+function isInputValid(){
+	var as = Math.abs(parseFloat(document.getElementById("anna_speed").value));
+	var bs = Math.abs(parseFloat(document.getElementById("bob_speed").value));
+	var al = parseFloat(document.getElementById("anna_len").value);
+	var bl = parseFloat(document.getElementById("bob_len").value);
+	
+	if(as > 0.99 || bs > 0.99 || al < 1 || bl < 1){
+		alert("Speeds must be between -0.99 and 0.99, lengths must be greater than 1");
+		return false;
+	}
+	
+	return true;
+}
+
+//Enable input boxes (except for current frame's speed)
+function enableInput(){
+	//Temporarily enable all
+	document.getElementById("anna_speed").removeAttribute("disabled");
+	document.getElementById("bob_speed").removeAttribute("disabled");
+	document.getElementById("anna_len").removeAttribute("disabled");
+	document.getElementById("bob_len").removeAttribute("disabled");
+	//Disable cur frame speed
+	document.getElementById(cur_frame + "_speed").setAttribute("disabled", "disabled");
+}
+
+//Disable all input boxes
+function disableInput(){
+	document.getElementById("anna_speed").setAttribute("disabled", "disabled");
+	document.getElementById("bob_speed").setAttribute("disabled", "disabled");
+	document.getElementById("anna_len").setAttribute("disabled", "disabled");
+	document.getElementById("bob_len").setAttribute("disabled", "disabled");
+}
+
 //Fired when play/pause button is pressed
 function togglePlay(button){
-	if(play){ //If currently playing
+	if(play){ //Currently playing, user wants to pause animation
 		button.innerHTML = "Play";
 		window.clearInterval(animateID);
-	} else {
+		document.getElementById("step").removeAttribute("disabled");
+		document.getElementById("update").removeAttribute("disabled");
+		play = !play;
+	} else { //Currently paused, user wants to play animation
+		if(!isInputValid()) return;
+		disableInput();
+		document.getElementById("reset").removeAttribute("disabled");
+		document.getElementById("step").setAttribute("disabled", "disabled");
+		document.getElementById("update").setAttribute("disabled", "disabled");
+		
 		button.innerHTML = "Pause";
 		calculateLengths();
 		calculateTimes();
-		animateID = window.setInterval(step, 50);
+		animateID = window.setInterval(animate, 50);
+		play = !play;
 	}
-	
-	play = !play;
 }
 
 //Fired when frame radio buttons are updated
@@ -59,6 +101,7 @@ function changeFrame(radio){
 	//Get corresponding IDs and names
 	var selected_id = radio.id.slice(0, -2); //either "anna" or "bob"
 	var other_id = (selected_id == "anna") ? "bob":"anna";
+	cur_frame = selected_id;
 	
 	var selected_speed_id = selected_id + "_speed";
 	var other_speed_id = other_id + "_speed";
@@ -76,7 +119,7 @@ function changeFrame(radio){
 	document.getElementById("speed_text").innerHTML = "Set velocities relative to " + selected_name + " (in terms of c)";
 	
 	//Update values
-	reset();
+	if(isInputValid()) reset();
 }
 
 //Fired when clock style radio buttons are updated
@@ -88,7 +131,7 @@ function changeClkStyle(radio){
 	draw();
 }
 
-//Calculate the apparent lengths of Anna's and Bob's ships
+//Set speeds, calculate lorentz, and determine the apparent lengths of Anna's and Bob's ships
 function calculateLengths(){	
 	//Anna's frame
 	if(document.getElementById("annaRB").checked){
@@ -135,12 +178,13 @@ function calculateTimes(){
 
 //Force values to be recalculated and displayed
 function update(){
+	if(!isInputValid()) return;
 	calculateLengths();
 	calculateTimes();
 	draw();
 }
 
-//Reset animation
+//Reset animation and enable inputs
 function reset(){
 	window.clearInterval(animateID);
 	document.getElementById("playpause").innerHTML = "Play";
@@ -149,15 +193,33 @@ function reset(){
 	bob_x = 500;
 	rest_time = 0;
 	update();
+	
+	enableInput();
+	document.getElementById("step").removeAttribute("disabled");
+	document.getElementById("update").removeAttribute("disabled");
+	document.getElementById("reset").setAttribute("disabled", "disabled");
 }
 
 //Draw, update values, and recalculate for next iteration
-//Note that this lags for one step when activated manually
 function step(){
+	if(!isInputValid()) return;
+	disableInput();
+	document.getElementById("reset").removeAttribute("disabled");
+	
+	calculateLengths();
 	rest_time += 50; //1 ms in sim = 1 ns in real world
 	anna_x += 15*anna_speed;
 	bob_x += 15*bob_speed;
 	calculateTimes();
+	draw();
+}
+
+//Clone of step() but without input checking, used by play() function
+function animate(){
+	rest_time += 50; //1 ms in sim = 1 ns in real world
+	anna_x += 15*anna_speed;
+	bob_x += 15*bob_speed;
+	calculateTimes(); //play() already calculates lengths
 	draw();
 }
 
