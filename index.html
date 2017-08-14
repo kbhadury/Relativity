@@ -10,7 +10,7 @@
 	
 	<body onload="init()">
 	
-		<h2 class="title">Relativity!</h2>
+		<h2 class="title"><i>Relativity!</i> Click <span id="howto" onclick=howTo()>here</span> for instructions</h2>
 		
 		<div id="shipdiv">
 			<canvas id="shipcanvas" width="1000" height="200">
@@ -52,11 +52,11 @@
 			<input type="radio" name="frame" id="annaRB" onchange="changeFrame(this)" checked="checked"><span style="color:red">Anna</span>
 			<input type="radio" name="frame" id="bobRB" onchange="changeFrame(this)"><span style="color:#4080bf">Bob</span>
 			
-			<h3 id="speed_text" style="font-size: 16px;">Set velocities relative to Anna (in terms of c)</h3>
+			<h4 id="speed_text">Set velocities relative to Anna (in terms of c)</h4>
 			<span style="color:red">Anna</span>: <input type="number" id="anna_speed" min="-0.99" max="0.99" step="0.01" value="0" disabled="disabled">
 			<span style="color:#4080bf">Bob</span>: <input type="number" id="bob_speed" min="-0.99" max="0.99" step="0.01" value="0">
 		
-			<h3>Set their spaceships' lengths (in meters)</h3>
+			<h4>Set their spaceships' lengths (in meters)</h4>
 			<p>These are the ships' <i>proper</i> lengths</p>
 
 			<span style="color:red">Anna</span>: <input type="number" id="anna_len" min="1" max="1000" step="1" value="100">
