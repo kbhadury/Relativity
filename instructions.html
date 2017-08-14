@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Relativity (instructions)</title>
+		<link href="https://fonts.googleapis.com/css?family=Aldrich" rel="stylesheet"> <!-- Google fonts -->
+		<link rel="stylesheet" href="canvas.css">
+	</head>
+	
+	<body>
+		<div id="instructions">
+			<h1>How to use <i>Relativity</i></h1>
+			
+			<p>
+			This page explains how to use all the buttons and switches on the main page; however, it won't try to explain the theory of relativity itself.  If you want an introduction to Einstein's famous theory, try visiting some of the following links:
+			</p>
+				<ul>
+					<li>
+					<a href="http://www1.phys.vt.edu/~takeuchi/relativity/notes/">Lecture notes from Virginia Tech</a>: not too much math, lots of helpful pictures.
+					</li>
+					<li>
+					<a href="http://www.dummies.com/education/science/physics/einsteins-special-relativity/">Dummies.com</a>: a quick read that involves a bit of historical background and covers the essential ideas.
+					</li>
+					<li>
+					<a href="https://github.com/kbhadury/Relativity#relativity">The project's readme page</a>: my own brief explanation of the main points behind the theory.  Also includes details on the math behind the simulation.
+					</li>
+				</ul>
+			<p>
+			The website features four main parts, which are explained below.
+			</p>
+			
+			<h3>That long box at the top of the page</h3>
+			<p>
+			This section shows Anna's and Bob's spaceships in red and blue, respectively, and the grid marks distances in meters.  There aren't any controls in this section.
+			<br>
+			<br>
+			This box is the main reason why I made this website.  Since everyday objects only move at a tiny fraction of the speed of light, we never really get to see the effects of relativity.  Hopefully this website helps you visualize the ideas behind the theory.
+			</p>
+			
+			<h3>Choose a frame</h3>
+			<p>
+			The controls on the right-hand side of the page are the key to visualizing the theory of relativity.  One of the main ideas is that everything is relative (that would explain the name of the theory).  This means that, in our two-person example, one person will always appear to not be moving because everything is happening relative to that person.  In physics terms, we are in that person's "frame".  You can choose if you want to be in Anna's frame or Bob's.  As an example, let's choose Anna's frame.
+			<br>
+			<br>
+			The next step is to set the ships' velocities.  In this example, these are velocities <i>in Anna's frame</i>.  This means that Anna's velocity must be zero, since she can't be moving relative to herself.  We enter Bob's speed in terms of of the speed of light, which is represented by the letter "c".  Since nothing can move faster than light, this number must be between -1 and 1 (negative values make Bob move backwards).
+			<br>
+			<br>
+			Finally, we need to set the spaceships' lengths.  According to the theory of relativity, the length of an object decreases as its speed increases.  For this reason, we'll want to input the length of each spaceship when it is not moving - this value is known as the ship's "proper" length.
+			</p>
+			
+			<h3>Onboard clocks</h3>
+			<p>
+			This section shows you what clocks onboard each of the spaceships would look like.  The clocks measure time in nanoseconds.  Each ship has clocks positioned at its extremes and one exactly in the middle.  You can toggle between digital clocks and analog clocks with the buttons at the bottom (one sweep around the analog clock represents 1000 nanoseconds).
+			<br>
+			<br>
+			A key point here: the clocks are initially synchronized when the middle points of each ship align.  Imagine Anna staring out of a porthole in the middle of her ship, waiting for Bob to fly by.  Bob, meanwhile, is also looking out of an identical porthole, waiting until he passes Anna.  The instant the two see each other, they both hit big red buttons on their ships that set all the clocks on <i>only their ship</i> to zero.
+			</p>
+			
+			<h3>Control panel</h3>
+			<p>
+			Now it's time for some action!  Use the four buttons in the center of the page to control the animation.
+			<ul>
+				<li>
+				The <b>Play</b> button starts the animation.  The simulation progresses by 1000 nanoseconds for every real-world second.  Press it a second time to pause the animation.
+				</li>
+				<li>
+				The <b>Step</b> button simulates 50 nanoseconds each time you press it.
+				</li>
+				<li>
+				The <b>Update</b> button forces the simulation to recalculate all values.  This is useful if you've just changed the ships' lengths or velocities and want to see the effects without the ships running across the screen.
+				</li>
+				<li>
+				The <b>Reset animation</b> button puts both ships back at their starting positions and resets the clocks.
+				</li>
+			</ul>
+			Note: after pressing Play or Step, you won't be able to change the ships' velocities or lengths until you reset the animation.
+			</p>
+		</div>
+	</body>
+</html>
