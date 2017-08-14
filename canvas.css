@@ -4,6 +4,19 @@ body{
 	font-family: 'Aldrich', sans-serif; /* From Google fonts */
 }
 
+a{
+	color: #4080bf;
+}
+
+input[type="number"]:disabled{
+	background: #909090;
+}
+
+#howto{
+	cursor: pointer;
+	color: #4080bf;
+}
+
 .title{
 	text-align: center;
 }
@@ -39,4 +52,11 @@ button{
 	width: 100px;
 	height: 40px;
 	font-family: 'Aldrich', sans-serif;
+}
+
+#instructions{
+	margin: 40px;
+	background-color: #f0f0f0;
+	color: #000000;
+	box-shadow: 0px 0px 10px 10px #4080bf;
 }
