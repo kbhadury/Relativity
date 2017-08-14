@@ -1,3 +1,8 @@
+//How-to link
+function howTo(){
+	window.open("instructions.html")
+}
+
 //Control drawing
 var shipcanvas, clkcanvas;
 var shipctx, clkctx;
