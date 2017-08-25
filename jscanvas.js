@@ -365,10 +365,10 @@ function grid(ctx, width, height, step){
 	
 	//Add numbers	
 	for(x = 0; x < width; x += step){
-		ctx.fillText(x, x+1, 0);
+		ctx.fillText(x + " m", x+1, 0);
 	}
 	
 	for(y = step; y < height; y += step){
-		ctx.fillText(y, 0, y+1);
+		ctx.fillText(y + " m", 0, y+1);
 	}
 }
